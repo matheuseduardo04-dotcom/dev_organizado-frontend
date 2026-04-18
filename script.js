@@ -28,7 +28,7 @@
   // ===== STATE =====
   const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8000'
-    : 'https://devorganizado-api.onrender.com';
+    : 'https://dev-organizado.onrender.com';
   let selectedStacks = JSON.parse(localStorage.getItem('sp_stacks') || '[]');
   let tasks = [];
 
