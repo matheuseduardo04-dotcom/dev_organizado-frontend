@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — DevOrganizado</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root,[data-theme="dark"]{
+      --bg:#09090f;--bg2:#0f0f18;--surface:#161622;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+      --text:#e4e4ec;--text2:rgba(228,228,236,.55);--text3:rgba(228,228,236,.28);
+      --primary:#14b8a6;--primary-rgb:20,184,166;--red:#ef4444;--green:#22c55e;--yellow:#eab308;--blue:#3b82f6;
+    }
+    [data-theme="light"]{
+      --bg:#f5f5f0;--bg2:#ebebdf;--surface:#ffffff;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.13);
+      --text:#1a1a2e;--text2:rgba(26,26,46,.6);--text3:rgba(26,26,46,.3);
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:32px 20px;transition:background .4s,color .4s}
+    h1,h2{font-family:'Sora',sans-serif}
+    button{cursor:pointer;font-family:inherit}
+
+    .container{max-width:940px;margin:0 auto}
+
+    /* HEADER */
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-left h1{font-size:1.4rem;letter-spacing:-.02em}
+    .badge{background:rgba(var(--primary-rgb),.1);color:var(--primary);padding:4px 12px;border-radius:6px;font-size:.7rem;font-weight:600;font-family:'JetBrains Mono',monospace}
+    .header-actions{display:flex;gap:8px;align-items:center}
+
+    .btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:.78rem;font-weight:600;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+    .btn:hover{border-color:var(--primary);color:var(--primary)}
+
+    .admin-name{font-size:.8rem;color:var(--text2);font-weight:500}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:all .3s}
+    .stat:hover{border-color:rgba(var(--primary-rgb),.2)}
+    .stat-num{font-size:2rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--primary)}
+    .stat-label{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:600}
+
+    /* SEARCH */
+    .search-bar{margin-bottom:16px}
+    .search-bar input{width:100%;padding:12px 16px 12px 42px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:14px center}
+    .search-bar input:focus{border-color:var(--primary)}
+    .search-bar input::placeholder{color:var(--text3)}
+
+    /* TABLE */
+    .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:background .4s}
+    table{width:100%;border-collapse:collapse}
+    th{text-align:left;padding:12px 16px;font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:600}
+    td{padding:12px 16px;font-size:.84rem;border-bottom:1px solid var(--border);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:rgba(var(--primary-rgb),.02)}
+
+    .user-id{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:.76rem}
+    .user-name{font-weight:600}
+    .user-email{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text2)}
+    .user-date{color:var(--text2);font-size:.78rem}
+
+    .role-badge{padding:3px 10px;border-radius:6px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:'JetBrains Mono',monospace}
+    .role-admin{background:rgba(var(--primary-rgb),.1);color:var(--primary)}
+    .role-user{background:rgba(255,255,255,.04);color:var(--text3)}
+    [data-theme="light"] .role-user{background:rgba(0,0,0,.04)}
+
+    .actions{display:flex;gap:4px}
+    .btn-icon{background:none;border:1px solid transparent;color:var(--text3);padding:6px;border-radius:6px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+    .btn-icon:hover{border-color:var(--border2)}
+    .btn-icon.admin-toggle:hover{color:var(--primary);background:rgba(var(--primary-rgb),.06)}
+    .btn-icon.delete:hover{color:var(--red);background:rgba(239,68,68,.06)}
+
+    .empty{text-align:center;padding:48px;color:var(--text3);font-size:.88rem}
+    .loading{text-align:center;padding:48px;color:var(--text2)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:.82rem;font-weight:600;z-index:100;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+    .toast.show{opacity:1;transform:translateY(0);pointer-events:all}
+    .toast.success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+    .toast.error{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+
+    /* DENIED */
+    .denied{text-align:center;padding:80px 20px}
+    .denied h2{margin-bottom:8px;color:var(--red)}
+    .denied p{color:var(--text2);margin-bottom:20px}
+
+    @media(max-width:700px){
+      .stats{grid-template-columns:1fr}
+      .header{flex-direction:column;align-items:flex-start}
+      th:nth-child(5),td:nth-child(5){display:none}
+    }
+    @media(max-width:500px){
+      th:nth-child(4),td:nth-child(4){display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- DENIED (hidden by default) -->
+    <div class="denied" id="denied" style="display:none">
+      <h2>Acesso negado</h2>
+      <p>Apenas administradores podem acessar esta página.</p>
+      <button class="btn" onclick="window.location.href='index.html'">Voltar ao site</button>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel">
+      <div class="header">
+        <div class="header-left">
+          <h1>Painel Admin</h1>
+          <span class="badge">PostgreSQL</span>
+        </div>
+        <div class="header-actions">
+          <span class="admin-name" id="adminName"></span>
+          <button class="btn" onclick="loadUsers()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Atualizar
+          </button>
+          <button class="btn" onclick="window.location.href='index.html'">Voltar ao site</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-num" id="totalUsers">-</div><div class="stat-label">Total de usuários</div></div>
+        <div class="stat"><div class="stat-num" id="todayUsers">-</div><div class="stat-label">Cadastros hoje</div></div>
+        <div class="stat"><div class="stat-num" id="lastUser">-</div><div class="stat-label">Último cadastro</div></div>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Buscar por nome ou email..." oninput="filterUsers()">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Cadastro</th>
+              <th>Cargo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="6" class="loading">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:8000'
+      : 'https://devorganizado-api.onrender.com';
+    let allUsers = [];
+
+    const savedTheme = localStorage.getItem('sp_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    const token = localStorage.getItem('sp_token');
+    const user = JSON.parse(localStorage.getItem('sp_user') || 'null');
+
+    if (!token || !user) {
+      window.location.href = 'login.html';
+    }
+
+    const adminNameEl = document.getElementById('adminName');
+    if (adminNameEl && user) adminNameEl.textContent = user.name;
+
+    function authHeaders() {
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show ${type}`;
+      setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function renderTable(users) {
+      const tbody = document.getElementById('tableBody');
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum usuário encontrado</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td class="user-id">#${u.id}</td>
+          <td class="user-name">${esc(u.name)}</td>
+          <td class="user-email">${esc(u.email)}</td>
+          <td class="user-date">${u.created_at}</td>
+          <td><span class="role-badge ${u.is_admin ? 'role-admin' : 'role-user'}">${u.is_admin ? 'Admin' : 'Usuário'}</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn-icon admin-toggle" title="${u.is_admin ? 'Remover admin' : 'Tornar admin'}" onclick="toggleAdmin(${u.id}, '${esc(u.name)}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </button>
+              <button class="btn-icon delete" title="Excluir" onclick="deleteUser(${u.id}, '${esc(u.name)}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterUsers() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allUsers.filter(u =>
+        u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    }
+
+    async function loadUsers() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '<tr><td colspan="6" class="loading">Carregando...</td></tr>';
+
+      try {
+        const res = await fetch(`${API}/api/admin/users`, { headers: authHeaders() });
+
+        if (res.status === 403) {
+          document.getElementById('adminPanel').style.display = 'none';
+          document.getElementById('denied').style.display = 'block';
+          return;
+        }
+
+        if (!res.ok) {
+          tbody.innerHTML = '<tr><td colspan="6" class="empty">Erro ao carregar</td></tr>';
+          return;
+        }
+
+        const data = await res.json();
+        allUsers = data.users;
+
+        document.getElementById('totalUsers').textContent = data.total;
+        document.getElementById('todayUsers').textContent = data.today;
+        document.getElementById('lastUser').textContent = data.last_register || '-';
+
+        renderTable(allUsers);
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">Servidor offline. Rode: uvicorn main:app --reload</td></tr>';
+      }
+    }
+
+    async function deleteUser(id, name) {
+      if (!confirm(`Tem certeza que quer excluir "${name}"?`)) return;
+      try {
+        const res = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: authHeaders() });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message, 'success');
+          loadUsers();
+        } else {
+          showToast(data.detail || 'Erro ao excluir', 'error');
+        }
+      } catch {
+        showToast('Servidor offline', 'error');
+      }
+    }
+
+    async function toggleAdmin(id, name) {
+      if (!confirm(`Alterar cargo de "${name}"?`)) return;
+      try {
+        const res = await fetch(`${API}/api/admin/users/${id}/toggle-admin`, { method: 'PATCH', headers: authHeaders() });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message, 'success');
+          loadUsers();
+        } else {
+          showToast(data.detail || 'Erro', 'error');
+        }
+      } catch {
+        showToast('Servidor offline', 'error');
+      }
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>
